@@ -19,7 +19,7 @@ export default function App() {
   const [ean, setEan] = useState<string>(MOCK_CARTAZES[0].ean);
   const [showGrid, setShowGrid] = useState<boolean>(false);
   const [usePrePrintedPaper, setUsePrePrintedPaper] = useState<boolean>(true);
-  const [coords, setCoords] = useState<CartazCoordinates>({
+  const [coords] = useState<CartazCoordinates>({
     ofertaTop: 0.3,
     cartaoAmareloTop: 1.7,
     cartaoAmareloLeft: 0.5,

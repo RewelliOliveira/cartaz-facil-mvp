@@ -54,11 +54,10 @@ export const Cartaz10x14 = ({
   return (
     <div
       id="cartaz-container"
-      className={`relative overflow-hidden text-black font-sans box-border select-none ${
-        maskOnly
+      className={`relative overflow-hidden text-black font-sans box-border select-none ${maskOnly
           ? 'bg-transparent border-none shadow-none'
           : 'bg-[#841e17] border border-gray-300 shadow-xl print:shadow-none'
-      }`}
+        }`}
       style={{
         width: '10cm',
         height: '14cm',
@@ -102,9 +101,8 @@ export const Cartaz10x14 = ({
 
       {/* 2. CARTÃO AMARELO PRINCIPAL (Transparente no Modo Máscara) */}
       <div
-        className={`absolute z-10 overflow-hidden ${
-          maskOnly ? 'bg-transparent shadow-none' : 'bg-[#fedc00] rounded-2xl shadow-md'
-        }`}
+        className={`absolute z-10 overflow-hidden ${maskOnly ? 'bg-transparent shadow-none' : 'bg-[#fedc00] rounded-2xl shadow-md'
+          }`}
         style={{
           top: `${finalCoords.cartaoAmareloTop}cm`,
           left: `${finalCoords.cartaoAmareloLeft}cm`,
@@ -254,7 +252,7 @@ export const Cartaz10x14 = ({
             </div>
           </div>
 
-          <div className="shrink-0 w-8 h-8 rounded-full bg-gradient-to-tr from-orange-500 via-amber-400 to-emerald-500 p-0.5 shadow flex items-center justify-center border border-white">
+          <div className="shrink-0 w-8 h-8 rounded-full bg-linear-to-tr from-orange-500 via-amber-400 to-emerald-500 p-0.5 shadow flex items-center justify-center border border-white">
             <div className="bg-white w-full h-full rounded-full flex flex-col items-center justify-center leading-none text-center">
               <span className="text-[7px] font-black text-orange-600 tracking-tighter">Pin</span>
               <span className="text-[5px] font-bold text-emerald-700 uppercase">clube</span>
