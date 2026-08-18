@@ -1,30 +1,25 @@
 export interface LayoutElement {
   id: string;
   nome: string;
-  tipo: 'texto' | 'imagem' | 'preco_combinado';
-  x: string;
-  y: string;
-  fontSize?: string; // Em pixels, ex: "84px", "24px", "14px"
+  tipo: 'texto' | 'preco_combinado';
+  x: string; // e.g. "0.6cm"
+  y: string; // e.g. "0.4cm"
+  fontSize?: string; // e.g. "84px", "24px"
   fontWeight?: string;
   fontFamily?: string;
   color?: string;
-  rotation?: number; // Graus: 0, 90, 180, 270, 360
+  rotation?: number; // e.g. 0, 90, 45
   text?: string;
   chaveReais?: string;
   chaveCentavos?: string;
-  src?: string;
   width?: string;
   height?: string;
-  backgroundColor?: string;
-  borderRadius?: string;
-  padding?: string;
   zIndex?: number;
 }
 
-// Template Padrão para Cartaz 14x10 cm
 export const LAYOUT_14X10: LayoutElement[] = [
   {
-    id: 'header-banner-14x10',
+    id: 'header-banner',
     nome: 'Banner de Oferta',
     tipo: 'texto',
     x: '0.6cm',
@@ -37,8 +32,8 @@ export const LAYOUT_14X10: LayoutElement[] = [
     text: 'OFERTA IMPERDÍVEL',
   },
   {
-    id: 'preco-principal-14x10',
-    nome: 'Preço Principal (Reais + Centavos)',
+    id: 'preco-principal',
+    nome: 'Preço Principal',
     tipo: 'preco_combinado',
     x: '0.6cm',
     y: '2.2cm',
@@ -51,7 +46,7 @@ export const LAYOUT_14X10: LayoutElement[] = [
     chaveCentavos: '{{CHAVE_1}}',
   },
   {
-    id: 'texto-referencia-14x10',
+    id: 'texto-referencia',
     nome: 'Informação de Referência',
     tipo: 'texto',
     x: '0.6cm',
@@ -64,7 +59,7 @@ export const LAYOUT_14X10: LayoutElement[] = [
     text: 'REF: {{CHAVE_2}}',
   },
   {
-    id: 'texto-desconto-14x10',
+    id: 'texto-desconto',
     nome: 'Tag de Economia',
     tipo: 'texto',
     x: '0.6cm',
@@ -78,10 +73,9 @@ export const LAYOUT_14X10: LayoutElement[] = [
   },
 ];
 
-// Template Padrão para Etiqueta Média 10x5 cm
 export const LAYOUT_10X5: LayoutElement[] = [
   {
-    id: 'nome-produto-10x5',
+    id: 'nome-produto',
     nome: 'Nome do Produto',
     tipo: 'texto',
     x: '0.4cm',
@@ -94,7 +88,7 @@ export const LAYOUT_10X5: LayoutElement[] = [
     text: 'PRODUTO EM OFERTA',
   },
   {
-    id: 'preco-principal-10x5',
+    id: 'preco-principal',
     nome: 'Preço Principal',
     tipo: 'preco_combinado',
     x: '0.4cm',
@@ -108,7 +102,7 @@ export const LAYOUT_10X5: LayoutElement[] = [
     chaveCentavos: '{{CHAVE_1}}',
   },
   {
-    id: 'texto-referencia-10x5',
+    id: 'texto-referencia',
     nome: 'Referência / Unidade',
     tipo: 'texto',
     x: '0.4cm',
@@ -122,7 +116,6 @@ export const LAYOUT_10X5: LayoutElement[] = [
   },
 ];
 
-// Template Padrão para Etiqueta Quadrada 5x5 cm ⭐
 export const LAYOUT_5X5: LayoutElement[] = [
   {
     id: 'header-5x5',
@@ -138,7 +131,7 @@ export const LAYOUT_5X5: LayoutElement[] = [
     text: 'OFERTA {{CHAVE_2}}',
   },
   {
-    id: 'preco-principal-5x5',
+    id: 'preco-principal',
     nome: 'Preço Principal',
     tipo: 'preco_combinado',
     x: '0.3cm',
@@ -166,7 +159,6 @@ export const LAYOUT_5X5: LayoutElement[] = [
   },
 ];
 
-// Template Padrão para Etiqueta Pequena 5x3 cm
 export const LAYOUT_5X3: LayoutElement[] = [
   {
     id: 'header-5x3',
@@ -182,7 +174,7 @@ export const LAYOUT_5X3: LayoutElement[] = [
     text: 'PRODUTO {{CHAVE_2}}',
   },
   {
-    id: 'preco-principal-5x3',
+    id: 'preco-principal',
     nome: 'Preço Principal',
     tipo: 'preco_combinado',
     x: '0.2cm',
