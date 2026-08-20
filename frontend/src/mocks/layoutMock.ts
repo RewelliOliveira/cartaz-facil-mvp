@@ -9,6 +9,7 @@ export interface LayoutElement {
   fontFamily?: string;
   color?: string;
   rotation?: number; // e.g. 0, 90, 45
+  transform?: string; // String de transform persistida do react-moveable
   text?: string;
   chaveReais?: string;
   chaveCentavos?: string;

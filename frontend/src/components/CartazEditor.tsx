@@ -20,19 +20,22 @@ export const CartazEditor = ({
   initialLayout = LAYOUT_14X10,
   maskOnly = false,
 }: CartazEditorProps) => {
-  // Ref para o container do cartaz
+  // REQUISITO 1: Ref para o contêiner do cartaz (14cm x 10cm, position: relative)
   const canvasRef = useRef<HTMLDivElement | null>(null);
 
   // Elemento DOM ativo selecionado para o react-moveable
   const [targetElement, setTargetElement] = useState<HTMLElement | null>(null);
 
-  // Lista de elementos no layout
+  // Estado dos elementos no layout
   const [elementos, setElementos] = useState<LayoutElement[]>(initialLayout);
 
-  // ID do elemento selecionado
+  // ID do elemento ativo selecionado
   const [selecionadoId, setSelecionadoId] = useState<string | null>(
     initialLayout[0]?.id || null
   );
+
+  // Controle de edição inline de texto no canvas (Duplo clique)
+  const [editingInlineId, setEditingInlineId] = useState<string | null>(null);
 
   // Dimensões dinâmicas do papel (cm)
   const [larguraCm, setLarguraCm] = useState<number>(14);
@@ -59,12 +62,65 @@ export const CartazEditor = ({
     );
   };
 
+  /**
+   * Movimentação de Precisão com Setas (Nudging por Teclado - 0.1cm)
+   */
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const active = document.activeElement;
+      if (
+        active &&
+        (active.tagName === 'INPUT' ||
+          active.tagName === 'TEXTAREA' ||
+          (active as HTMLElement).isContentEditable)
+      ) {
+        return;
+      }
+
+      if (!selecionadoId) return;
+
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        e.preventDefault();
+        const deltaX = e.key === 'ArrowLeft' ? -0.1 : e.key === 'ArrowRight' ? 0.1 : 0;
+        const deltaY = e.key === 'ArrowUp' ? -0.1 : e.key === 'ArrowDown' ? 0.1 : 0;
+        moverPosicao(selecionadoId, deltaX, deltaY);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selecionadoId, elementos]);
+
+  /**
+   * Sobreposição de Elementos (Z-Index)
+   */
+  const trazerParaFrente = (id: string) => {
+    const maxZ = Math.max(...elementos.map((el) => el.zIndex || 10), 10);
+    atualizarElemento(id, { zIndex: maxZ + 1 });
+  };
+
+  const enviarParaTras = (id: string) => {
+    const minZ = Math.min(...elementos.map((el) => el.zIndex || 10), 10);
+    atualizarElemento(id, { zIndex: Math.max(1, minZ - 1) });
+  };
+
   // Garante a unidade em px para fonte
   const handleFontSizeChange = (id: string, value: string) => {
     const raw = value.trim();
     if (!raw) return;
     const formatted = /^\d+$/.test(raw) ? `${raw}px` : raw;
     atualizarElemento(id, { fontSize: formatted });
+  };
+
+  // Move a posição X e Y em centímetros
+  const moverPosicao = (id: string, deltaXcm: number, deltaYcm: number) => {
+    const el = elementos.find((item) => item.id === id);
+    if (!el) return;
+    const posX = parseFloat(el.x.replace('cm', '')) || 0;
+    const posY = parseFloat(el.y.replace('cm', '')) || 0;
+    const novoX = Math.max(0, +(posX + deltaXcm).toFixed(2));
+    const novoY = Math.max(0, +(posY + deltaYcm).toFixed(2));
+    atualizarElemento(id, { x: `${novoX}cm`, y: `${novoY}cm` });
   };
 
   // Adiciona novo elemento de texto
@@ -82,6 +138,7 @@ export const CartazEditor = ({
       fontFamily: 'Arial, sans-serif',
       color: '#1f2937',
       rotation: 0,
+      zIndex: 10,
       text: `NOVO TEXTO (${proximaChave})`,
     };
     setElementos((prev) => [...prev, novoElemento]);
@@ -153,7 +210,7 @@ export const CartazEditor = ({
       <html lang="pt-BR">
         <head>
           <meta charset="UTF-8" />
-          <title>Impressão - ${larguraCm}x${alturaCm} cm</title>
+          <title>Impressão Sincronizada - ${larguraCm}x${alturaCm} cm</title>
           ${styleTags}
           <style>
             @media print {
@@ -202,7 +259,7 @@ export const CartazEditor = ({
         <body>
           <div class="notice-box no-print">
             <h3 style="margin:0 0 0.5rem 0;">🖨️ Impressão (${larguraCm} x ${alturaCm} cm)</h3>
-            <p style="margin:0 0 0.75rem 0; color:#475569;">React Moveable Dynamic Engine</p>
+            <p style="margin:0 0 0.75rem 0; color:#475569;">Física Sincronizada React-Moveable</p>
             <button onclick="window.print()" style="background:#dc2626; color:white; font-weight:bold; border:none; padding:0.6rem 1.2rem; border-radius:0.375rem; cursor:pointer;">
               Disparar Impressão (Ctrl + P)
             </button>
@@ -220,22 +277,22 @@ export const CartazEditor = ({
   };
 
   return (
-    <div className="w-full space-y-6">
-      {/* PAINEL SUPERIOR: TAMANHOS DO PAPEL */}
+    <div className="w-full space-y-6 font-sans">
+      {/* PAINEL SUPERIOR: TAMANHO DO CARTAZ E CONTROLES */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-red-600/20 text-red-400 font-bold flex items-center justify-center text-sm border border-red-500/30">
-            ⚡
+            🎯
           </div>
           <div>
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              React Moveable Engine
+              Editor Profissional Canva-Style (Coordenadas Sincronizadas)
               <span className="text-xs font-mono text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800">
                 {larguraCm} x {alturaCm} cm
               </span>
             </h3>
             <p className="text-xs text-slate-400">
-              Clique em qualquer elemento para Arrastar, Redimensionar e Rotacionar livremente
+              Transform dinâmico via React-Moveable • Reset de CSS zerado • Setas do teclado (0.1cm)
             </p>
           </div>
         </div>
@@ -300,7 +357,7 @@ export const CartazEditor = ({
         </div>
       </div>
 
-      {/* PAINEL PRINCIPAL (SIDEBAR + CANVAS MOVEABLE) */}
+      {/* ESTRUTURA EXTERNA COM TAILWIND CSS */}
       <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* 1. SIDEBAR DE PROPRIEDADES (5 cols) */}
         <div className="lg:col-span-5 space-y-4">
@@ -333,7 +390,7 @@ export const CartazEditor = ({
                   <span className="truncate">{el.nome || el.id}</span>
                   <div className="flex items-center gap-2 shrink-0">
                     <span className="text-[10px] text-slate-500 font-mono">
-                      {el.fontSize} • {el.rotation ? `${el.rotation}°` : '0°'}
+                      z:{el.zIndex || 10} • {el.fontSize}
                     </span>
                     {elementos.length > 1 && (
                       <button
@@ -352,13 +409,32 @@ export const CartazEditor = ({
             </div>
           </div>
 
-          {/* INSPETOR */}
+          {/* INSPETOR DE PROPRIEDADES DO ELEMENTO SELECIONADO */}
           {elementoSelecionado ? (
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-sm space-y-3">
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-sm space-y-4">
               <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                 <h3 className="text-xs font-bold text-red-400 uppercase tracking-wider">
                   Inspetor: {elementoSelecionado.nome}
                 </h3>
+              </div>
+
+              {/* SOBREPOSIÇÃO DE ELEMENTOS (Z-INDEX) */}
+              <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between gap-2">
+                <span className="text-xs font-semibold text-slate-300">Ordem de Camada (Z-Index):</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => trazerParaFrente(elementoSelecionado.id)}
+                    className="bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold px-2.5 py-1 rounded transition-all cursor-pointer"
+                  >
+                    ⬆️ Trazer para Frente
+                  </button>
+                  <button
+                    onClick={() => enviarParaTras(elementoSelecionado.id)}
+                    className="bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold px-2.5 py-1 rounded transition-all cursor-pointer"
+                  >
+                    ⬇️ Enviar para Trás
+                  </button>
+                </div>
               </div>
 
               {/* Nome da camada */}
@@ -385,13 +461,13 @@ export const CartazEditor = ({
                     className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1 text-xs text-emerald-300 font-mono"
                   />
 
-                  {/* Pílulas de Âncoras */}
+                  {/* Pílulas de Âncoras Rápidas */}
                   <div className="flex flex-wrap gap-1 pt-1">
                     {Object.entries(dadosProduto).map(([key, val]) => (
                       <button
                         key={key}
                         onClick={() => inserirChaveNoTexto(elementoSelecionado.id, key)}
-                        className="bg-slate-900 hover:bg-emerald-950 text-slate-200 border border-slate-700 px-2 py-0.5 rounded text-[10px] font-mono"
+                        className="bg-slate-900 hover:bg-emerald-950 text-slate-200 border border-slate-700 px-2 py-0.5 rounded text-[10px] font-mono cursor-pointer"
                       >
                         <span className="text-emerald-400 font-bold">{key}</span> ({val})
                       </button>
@@ -408,7 +484,7 @@ export const CartazEditor = ({
                     <select
                       value={elementoSelecionado.chaveReais || '{{CHAVE_0}}'}
                       onChange={(e) => atualizarElemento(elementoSelecionado.id, { chaveReais: e.target.value })}
-                      className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-emerald-400 font-mono text-xs"
+                      className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-emerald-400 font-mono text-xs cursor-pointer"
                     >
                       {chavesDisponiveis.map((k) => (
                         <option key={k} value={k}>
@@ -422,7 +498,7 @@ export const CartazEditor = ({
                     <select
                       value={elementoSelecionado.chaveCentavos || '{{CHAVE_1}}'}
                       onChange={(e) => atualizarElemento(elementoSelecionado.id, { chaveCentavos: e.target.value })}
-                      className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-emerald-400 font-mono text-xs"
+                      className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-emerald-400 font-mono text-xs cursor-pointer"
                     >
                       {chavesDisponiveis.map((k) => (
                         <option key={k} value={k}>
@@ -434,19 +510,20 @@ export const CartazEditor = ({
                 </div>
               )}
 
-              {/* Tipografia & Estilo */}
+              {/* BARRA LATERAL PARA FONTES E CORES */}
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div>
-                  <label className="block text-slate-400 mb-1">Fonte:</label>
+                  <label className="block text-slate-400 mb-1">Família da Fonte:</label>
                   <select
                     value={elementoSelecionado.fontFamily || 'Arial, sans-serif'}
                     onChange={(e) => atualizarElemento(elementoSelecionado.id, { fontFamily: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-white text-xs"
+                    className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-white text-xs cursor-pointer"
                   >
                     <option value="Arial, sans-serif">Arial</option>
                     <option value='Impact, "Arial Black", sans-serif'>Impact</option>
                     <option value='"Times New Roman", serif'>Times New Roman</option>
                     <option value='"Courier New", monospace'>Courier New</option>
+                    <option value="Georgia, serif">Georgia</option>
                     <option value="Verdana, sans-serif">Verdana</option>
                   </select>
                 </div>
@@ -465,7 +542,7 @@ export const CartazEditor = ({
               {/* Cor e Rotação */}
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div>
-                  <label className="block text-slate-400 mb-1">Cor:</label>
+                  <label className="block text-slate-400 mb-1">Cor do Texto:</label>
                   <div className="flex items-center gap-1.5">
                     <input
                       type="color"
@@ -487,7 +564,12 @@ export const CartazEditor = ({
                   <input
                     type="number"
                     value={elementoSelecionado.rotation || 0}
-                    onChange={(e) => atualizarElemento(elementoSelecionado.id, { rotation: parseInt(e.target.value) || 0 })}
+                    onChange={(e) =>
+                      atualizarElemento(elementoSelecionado.id, {
+                        rotation: parseInt(e.target.value) || 0,
+                        transform: `rotate(${parseInt(e.target.value) || 0}deg)`,
+                      })
+                    }
                     className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-white font-mono text-xs"
                   />
                 </div>
@@ -500,23 +582,23 @@ export const CartazEditor = ({
           )}
         </div>
 
-        {/* 2. CANVAS WYSIWYG MOVEABLE (7 cols) */}
+        {/* 2. ÁREA DE VISUALIZAÇÃO DO CARTAZ (7 cols) */}
         <div className="lg:col-span-7 flex flex-col items-center justify-start bg-slate-900/60 border border-slate-800 rounded-xl p-6 shadow-inner">
           <div className="mb-3 text-center">
             <span className="text-xs font-semibold text-slate-300 uppercase tracking-widest block">
-              Canvas React Moveable ({larguraCm} x {alturaCm} cm)
+              Canvas Sincronizado ({larguraCm} x {alturaCm} cm)
             </span>
             <span className="text-[11px] text-slate-400">
-              Alças interativas de Arraste, Redimensionamento e Rotação ativas
+              Caixa de controle vinculada ao container pai sem offset visual
             </span>
           </div>
 
-          {/* CANVAS CONTAINER FÍSICO */}
+          {/* REQUISITO 1: CONTÊINER PAI DO CARTAZ DE ESTRITAMENTE 14X10 CM (OU TAMANHO ATIVO) */}
           <div className="p-6 bg-slate-950 rounded-xl border border-slate-800 shadow-2xl min-h-[12cm] flex items-center justify-center relative overflow-visible">
             <div
               ref={canvasRef}
               id="cartaz-container"
-              className={`relative box-border select-none ${
+              className={`relative select-none ${
                 maskOnly
                   ? 'bg-transparent border-none shadow-none'
                   : 'bg-white border border-gray-300 shadow-lg print:shadow-none'
@@ -527,13 +609,18 @@ export const CartazEditor = ({
                 position: 'relative',
                 backgroundColor: maskOnly ? 'transparent' : 'white',
                 overflow: 'hidden',
+                margin: 0,
+                padding: 0,
+                boxSizing: 'border-box',
               }}
             >
-              {/* Elementos Renderizados */}
+              {/* REQUISITO 2 & 3: RESET DE CSS DOS ELEMENTOS (MARGIN: 0, BOX-SIZING: BORDER-BOX, TRANSFORM DIRETO) */}
               {elementos.map((element) => {
                 const isSelected = selecionadoId === element.id;
-                const rotationDegree = element.rotation || 0;
-                const transformStyle = rotationDegree ? `rotate(${rotationDegree}deg)` : undefined;
+                const isEditingThis = editingInlineId === element.id;
+                const activeTransform =
+                  element.transform ||
+                  (element.rotation ? `rotate(${element.rotation}deg)` : undefined);
 
                 if (element.tipo === 'preco_combinado') {
                   const reaisVal = injectValues(element.chaveReais || '{{CHAVE_0}}');
@@ -550,17 +637,22 @@ export const CartazEditor = ({
                       key={element.id}
                       id={element.id}
                       onClick={() => setSelecionadoId(element.id)}
-                      className={`cursor-pointer transition-all inline-block ${
-                        isSelected ? 'ring-2 ring-red-500 ring-dashed rounded p-0.5' : ''
+                      className={`cursor-pointer inline-block ${
+                        isSelected ? 'ring-2 ring-red-500 ring-dashed rounded' : ''
                       }`}
                       style={{
                         position: 'absolute',
                         top: element.y,
                         left: element.x,
-                        transform: transformStyle,
+                        transform: activeTransform,
                         transformOrigin: 'center center',
                         zIndex: element.zIndex || 10,
                         whiteSpace: 'nowrap',
+                        margin: 0,
+                        padding: 0,
+                        boxSizing: 'border-box',
+                        width: element.width,
+                        height: element.height,
                       }}
                     >
                       <div
@@ -607,14 +699,15 @@ export const CartazEditor = ({
                     key={element.id}
                     id={element.id}
                     onClick={() => setSelecionadoId(element.id)}
-                    className={`cursor-pointer transition-all inline-block ${
-                      isSelected ? 'ring-2 ring-red-500 ring-dashed rounded p-0.5' : ''
+                    onDoubleClick={() => setEditingInlineId(element.id)}
+                    className={`cursor-pointer inline-block ${
+                      isSelected ? 'ring-2 ring-red-500 ring-dashed rounded' : ''
                     }`}
                     style={{
                       position: 'absolute',
                       top: element.y,
                       left: element.x,
-                      transform: transformStyle,
+                      transform: activeTransform,
                       transformOrigin: 'center center',
                       fontSize: element.fontSize || '14px',
                       fontWeight: element.fontWeight,
@@ -623,44 +716,99 @@ export const CartazEditor = ({
                       zIndex: element.zIndex || 10,
                       lineHeight: '1',
                       whiteSpace: 'nowrap',
+                      margin: 0,
+                      padding: 0,
+                      boxSizing: 'border-box',
+                      width: element.width,
+                      height: element.height,
                     }}
                   >
-                    {renderedText}
+                    {isEditingThis ? (
+                      <input
+                        type="text"
+                        autoFocus
+                        value={element.text || ''}
+                        onChange={(e) => atualizarElemento(element.id, { text: e.target.value })}
+                        onBlur={() => setEditingInlineId(null)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') setEditingInlineId(null);
+                        }}
+                        className="bg-transparent border-b border-blue-500 outline-none text-current font-inherit"
+                        style={{ fontSize: 'inherit', fontFamily: 'inherit', color: 'inherit' }}
+                      />
+                    ) : (
+                      renderedText
+                    )}
                   </div>
                 );
               })}
-            </div>
 
-            {/* REACT MOVEABLE CONTROLS FLUTUANTE */}
-            {targetElement && (
-              <Moveable
-                target={targetElement}
-                container={canvasRef.current}
-                draggable={true}
-                resizable={false}
-                rotatable={true}
-                snappable={true}
-                snapCenter={true}
-                snapThreshold={5}
-                origin={false}
-                throttleDrag={0}
-                throttleRotate={0}
-                onDrag={({ left, top }) => {
-                  const canvasNode = canvasRef.current;
-                  if (!canvasNode || !selecionadoId) return;
-                  const rect = canvasNode.getBoundingClientRect();
-                  const scaleX = larguraCm / rect.width;
-                  const scaleY = alturaCm / rect.height;
-                  const xCm = Math.max(0, +(left * scaleX).toFixed(2));
-                  const yCm = Math.max(0, +(top * scaleY).toFixed(2));
-                  atualizarElemento(selecionadoId, { x: `${xCm}cm`, y: `${yCm}cm` });
-                }}
-                onRotate={({ beforeRotate }) => {
-                  if (!selecionadoId) return;
-                  atualizarElemento(selecionadoId, { rotation: Math.round(beforeRotate) });
-                }}
-              />
-            )}
+              {/* REQUISITO 1 & 3 & 4: COMPONENTE <MOVEABLE /> RENDERIZADO DENTRO DO CONTÊINER DO CARTAZ COM E.TRANSFORM DIRETO, ORIGIN=FALSE E EDGE=TRUE */}
+              {targetElement && (
+                <Moveable
+                  target={targetElement}
+                  container={canvasRef.current}
+                  draggable={true}
+                  resizable={true}
+                  rotatable={true}
+                  snappable={true}
+                  snapCenter={true}
+                  snapThreshold={5}
+                  origin={false}
+                  edge={true}
+                  bounds={{
+                    left: 0,
+                    top: 0,
+                    right: canvasRef.current?.clientWidth || 529,
+                    bottom: canvasRef.current?.clientHeight || 377,
+                  }}
+                  throttleDrag={0}
+                  throttleRotate={0}
+                  throttleResize={0}
+                  onDrag={({ target, transform, left, top }) => {
+                    // REQUISITO 3: Atualizar a string de transform diretamente no elemento DOM e salvar no estado
+                    target.style.transform = transform;
+                    if (!selecionadoId) return;
+
+                    const canvasNode = canvasRef.current;
+                    if (canvasNode) {
+                      const rect = canvasNode.getBoundingClientRect();
+                      const scaleX = larguraCm / rect.width;
+                      const scaleY = alturaCm / rect.height;
+                      const xCm = Math.max(0, +(left * scaleX).toFixed(2));
+                      const yCm = Math.max(0, +(top * scaleY).toFixed(2));
+
+                      atualizarElemento(selecionadoId, {
+                        x: `${xCm}cm`,
+                        y: `${yCm}cm`,
+                        transform: transform,
+                      });
+                    }
+                  }}
+                  onRotate={({ target, transform, beforeRotate }) => {
+                    // REQUISITO 3: Atualizar transform diretamente no e.target.style.transform
+                    target.style.transform = transform;
+                    if (!selecionadoId) return;
+                    atualizarElemento(selecionadoId, {
+                      rotation: Math.round(beforeRotate),
+                      transform: transform,
+                    });
+                  }}
+                  onResize={({ target, width, height, transform }) => {
+                    // REQUISITO 3: Atualizar largura/altura/transform no e.target.style
+                    target.style.width = `${width}px`;
+                    target.style.height = `${height}px`;
+                    target.style.transform = transform;
+                    if (!selecionadoId) return;
+                    atualizarElemento(selecionadoId, {
+                      width: `${Math.round(width)}px`,
+                      height: `${Math.round(height)}px`,
+                      transform: transform,
+                    });
+                  }}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>
