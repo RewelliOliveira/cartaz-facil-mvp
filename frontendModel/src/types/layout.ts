@@ -22,8 +22,10 @@ export type LayoutTemplate = {
 
 export type MockProduct = {
   id: string;
+  code: string;
   name: string;
   rawData: string;
+  barcode?: string;
 };
 
 export type TemplateSize = {

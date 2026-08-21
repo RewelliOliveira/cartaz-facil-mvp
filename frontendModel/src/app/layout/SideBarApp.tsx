@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Menu, Home as HomeIcon, LayoutGrid, Plus } from "lucide-react";
+import { Menu, Home as HomeIcon, FileText, LayoutGrid, Plus } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -17,6 +17,10 @@ const menuItemsWithIcons = [
   {
     ...NAV_ROUTES.home,
     icon: HomeIcon,
+  },
+  {
+    ...NAV_ROUTES.cartazUnitario,
+    icon: FileText,
   },
   {
     ...NAV_ROUTES.componentesProntos,

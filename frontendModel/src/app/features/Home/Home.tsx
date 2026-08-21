@@ -27,7 +27,7 @@ export function Home() {
       color: "text-emerald-600 dark:text-emerald-400",
       bgColor: "bg-emerald-50 dark:bg-emerald-950/40",
       borderColor: "hover:border-emerald-500/50",
-      onClick: () => navigate(NAV_ROUTES.criarLayout.url),
+      onClick: () => navigate(NAV_ROUTES.cartazUnitario.url),
     },
     {
       id: "importar-lista",

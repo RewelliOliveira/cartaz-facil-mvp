@@ -3,6 +3,10 @@ export const NAV_ROUTES = {
     title: "Início",
     url: "/",
   },
+  cartazUnitario: {
+    title: "Cartaz Unitário",
+    url: "/cartaz-unitario",
+  },
   componentesProntos: {
     title: "Galeria de Layouts",
     url: "/galeria",
@@ -19,6 +23,7 @@ export const NAV_ROUTES = {
 
 export const menuItems = [
   NAV_ROUTES.home,
+  NAV_ROUTES.cartazUnitario,
   NAV_ROUTES.componentesProntos,
   NAV_ROUTES.criarLayout,
 ];

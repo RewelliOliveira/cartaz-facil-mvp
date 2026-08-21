@@ -2,24 +2,74 @@ import type { MockProduct, LayoutTemplate, TemplateSize, LayoutElement } from ".
 
 export const MOCK_PRODUCTS: MockProduct[] = [
   {
-    id: "prod-001",
-    name: "Goiaba Vermelha KG",
+    id: "prod-1443",
+    code: "1443",
+    name: "GOIABA VERMELHA KG",
+    barcode: "7891234014431",
     rawData: "Preço regular: 7!@# .19!@#1KG R$7.19!@#Tributos Aprox.: R$.3(4.2%)",
   },
   {
+    id: "prod-35",
+    code: "35",
+    name: "MOELA FRANGO REGINA RESF.500G BDJ - UN UN",
+    barcode: "7891234000359",
+    rawData: "Preço regular: 8!@# .90!@#1UN R$8.90!@#Tributos Aprox.: R$.4(5.1%)",
+  },
+  {
+    id: "prod-124",
+    code: "124",
+    name: "ENTREGA BAIRRO - UN UN",
+    barcode: "7891234001240",
+    rawData: "Preço regular: 5!@# .00!@#1UN R$5.00!@#Tributos Aprox.: R$.2(4.0%)",
+  },
+  {
+    id: "prod-1201",
+    code: "1201",
+    name: "PIZZA MARGUERITA PEQUENA UND - UN UN",
+    barcode: "7891234012017",
+    rawData: "Preço regular: 14!@# .58!@#1UN R$14.58!@#Tributos Aprox.: R$.31(4.2%)",
+  },
+  {
+    id: "prod-1228",
+    code: "1228",
+    name: "PIZZA MARINARA PEQUENA UND - UN UN",
+    barcode: "7891234012284",
+    rawData: "Preço de por: 18!@# .90!@#14!@# .90!@#1UN R$14.90!@#Tributos Aprox.: R$.35(4.5%)",
+  },
+  {
+    id: "prod-1252",
+    code: "1252",
+    name: "PIZZA DOM BOSCO GRANDE UND - KG KG",
+    barcode: "7891234012529",
+    rawData: "Preço regular: 28!@# .90!@#1KG R$28.90!@#Tributos Aprox.: R$.95(5.2%)",
+  },
+  {
+    id: "prod-1260",
+    code: "1260",
+    name: "PIZZA BACON C/CATUPIRY PEQUENA UND - UN UN",
+    barcode: "7891234012604",
+    rawData: "Preço de por: 22!@# .90!@#17!@# .90!@#1UN R$17.90!@#Tributos Aprox.: R$.45(4.8%)",
+  },
+  {
+    id: "prod-1287",
+    code: "1287",
+    name: "PIZZA BANANA PEQUENA UND - UN UN",
+    barcode: "7891234012871",
+    rawData: "Preço regular: 15!@# .90!@#1UN R$15.90!@#Tributos Aprox.: R$.38(4.3%)",
+  },
+  {
     id: "prod-002",
+    code: "433",
     name: "Mamão Formosa KG",
+    barcode: "7891234004333",
     rawData: "Preço regular: 12!@# .99!@#1KG R$43.3!@#R$2.88(22.2%)",
   },
   {
     id: "prod-003",
+    code: "462",
     name: "Banana Prata KG",
+    barcode: "7891234004623",
     rawData: "Preço de por: 24!@# .49!@#16!@# .19!@#1KG R$46.26!@#R$3.83(23.63%)",
-  },
-  {
-    id: "prod-004",
-    name: "Uva Thompson Sem Semente KG",
-    rawData: "Preço de por: 18!@# .90!@#14!@# .99!@#1KG R$38.50!@#R$3.15(21.1%)",
   },
 ];
 
