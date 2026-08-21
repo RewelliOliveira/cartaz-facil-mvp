@@ -4,7 +4,7 @@ import { SidebarProvider } from "../../components/ui/sidebar";
 
 export function Layout() {
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       <div className="flex h-screen w-full overflow-hidden bg-slate-50">
         <SidebarApp />
         <div className="flex flex-1 flex-col min-w-0 min-h-0 transition-all duration-300 ease-in-out">
