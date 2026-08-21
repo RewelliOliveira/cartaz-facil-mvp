@@ -75,12 +75,16 @@ function TemplatePreview({
   );
 }
 
+const defaultProduct = MOCK_PRODUCTS[0];
+const defaultParsed = parseProductString(defaultProduct.rawData);
+const defaultPlaceholders = { ...dataToPlaceholderMap(defaultParsed), nome: defaultProduct.name };
+
 export function ComponentesProntos() {
   const navigate = useNavigate();
   const { templates, deleteCustomTemplate } = useLayouts();
 
-  const [placeholders, setPlaceholders] = useState<Record<string, string> | null>(null);
-  const [selectedProductId, setSelectedProductId] = useState<string>("");
+  const [placeholders, setPlaceholders] = useState<Record<string, string> | null>(defaultPlaceholders);
+  const [selectedProductId, setSelectedProductId] = useState<string>(defaultProduct.id);
 
   const [printTemplate, setPrintTemplate] = useState<TLayoutTemplate | null>(null);
   const [printOpen, setPrintOpen] = useState(false);

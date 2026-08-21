@@ -31,10 +31,15 @@ interface PrintSheetProps {
 
 const PX_PER_CM = 37.8;
 
+const defaultProduct = MOCK_PRODUCTS[0];
+const defaultParsed = parseProductString(defaultProduct.rawData);
+const defaultPlaceholders = { ...dataToPlaceholderMap(defaultParsed), nome: defaultProduct.name };
+
 export function PrintSheet({ template, open, onOpenChange, initialPlaceholders }: PrintSheetProps) {
   const [placeholders, setPlaceholders] = useState<Record<string, string> | null>(
-    initialPlaceholders ?? null
+    initialPlaceholders ?? defaultPlaceholders
   );
+  const [selectedProductId, setSelectedProductId] = useState<string>(defaultProduct.id);
   const [quantity, setQuantity] = useState(1);
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -52,6 +57,7 @@ export function PrintSheet({ template, open, onOpenChange, initialPlaceholders }
 
   function handleProductChange(productId: string | null) {
     if (!productId) return;
+    setSelectedProductId(productId);
     const product = MOCK_PRODUCTS.find((p) => p.id === productId);
     if (!product) return;
     try {
@@ -101,7 +107,7 @@ export function PrintSheet({ template, open, onOpenChange, initialPlaceholders }
               <Package className="w-3.5 h-3.5" />
               Produto
             </label>
-            <Select onValueChange={handleProductChange}>
+            <Select value={selectedProductId} onValueChange={handleProductChange}>
               <SelectTrigger id="print-product-select" className="h-9">
                 <SelectValue placeholder="Selecione um produto..." />
               </SelectTrigger>

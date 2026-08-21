@@ -68,21 +68,33 @@ export function parseProductString(raw: string): ParsedProductData {
 
 export function dataToPlaceholderMap(data: ParsedProductData): Record<string, string> {
   if (data.tipo === "regular") {
+    const preco = `${data.reais},${data.centavos}`;
     return {
       reais: data.reais,
       centavos: data.centavos,
-      precoCompleto: `${data.reais},${data.centavos}`,
+      precoCompleto: preco,
+      porReais: data.reais,
+      porCentavos: data.centavos,
+      porCompleto: preco,
+      deReais: "",
+      deCentavos: "",
+      deCompleto: "",
       referencia: data.referencia,
       tributos: data.tributos,
     };
   }
+  const porPreco = `${data.porReais},${data.porCentavos}`;
+  const dePreco = `${data.deReais},${data.deCentavos}`;
   return {
+    reais: data.porReais,
+    centavos: data.porCentavos,
+    precoCompleto: porPreco,
     deReais: data.deReais,
     deCentavos: data.deCentavos,
-    deCompleto: `${data.deReais},${data.deCentavos}`,
+    deCompleto: dePreco,
     porReais: data.porReais,
     porCentavos: data.porCentavos,
-    porCompleto: `${data.porReais},${data.porCentavos}`,
+    porCompleto: porPreco,
     referencia: data.referencia,
     tributos: data.tributos,
   };

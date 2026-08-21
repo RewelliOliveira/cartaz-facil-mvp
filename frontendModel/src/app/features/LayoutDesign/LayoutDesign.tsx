@@ -50,6 +50,10 @@ function buildBlankTemplate(sizeConfig: NonNullable<LocationState["sizeConfig"]>
   };
 }
 
+const defaultProduct = MOCK_PRODUCTS[0];
+const defaultParsed = parseProductString(defaultProduct.rawData);
+const defaultPlaceholders = { ...dataToPlaceholderMap(defaultParsed), nome: defaultProduct.name };
+
 export function LayoutDesign() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -73,8 +77,9 @@ export function LayoutDesign() {
   const [template, setTemplate] = useState<LayoutTemplate>(initialTemplate);
   const [zoom, setZoom] = useState(initialZoom);
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
-  const [parsedData, setParsedData] = useState<ParsedProductData | null>(null);
-  const [placeholders, setPlaceholders] = useState<Record<string, string> | null>(null);
+  const [selectedProductId, setSelectedProductId] = useState<string>(defaultProduct.id);
+  const [parsedData, setParsedData] = useState<ParsedProductData | null>(defaultParsed);
+  const [placeholders, setPlaceholders] = useState<Record<string, string> | null>(defaultPlaceholders);
   const [templateName, setTemplateName] = useState(initialTemplate.name);
   const [saved, setSaved] = useState(false);
   const [printOpen, setPrintOpen] = useState(false);
@@ -87,6 +92,7 @@ export function LayoutDesign() {
 
   function handleProductChange(productId: string | null) {
     if (!productId) return;
+    setSelectedProductId(productId);
     const product = MOCK_PRODUCTS.find((p) => p.id === productId);
     if (!product) return;
     try {
@@ -170,7 +176,7 @@ export function LayoutDesign() {
 
         <div className="flex items-center gap-1.5 shrink-0">
           <span className="text-xs text-muted-foreground">Produto:</span>
-          <Select onValueChange={handleProductChange}>
+          <Select value={selectedProductId} onValueChange={handleProductChange}>
             <SelectTrigger id="select-product" className="h-7 text-xs w-47.5">
               <SelectValue placeholder="Selecione..." />
             </SelectTrigger>
