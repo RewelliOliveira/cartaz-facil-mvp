@@ -1,7 +1,11 @@
 export const NAV_ROUTES = {
+  home: {
+    title: "Início",
+    url: "/",
+  },
   componentesProntos: {
     title: "Galeria de Layouts",
-    url: "/",
+    url: "/galeria",
   },
   criarLayout: {
     title: "Criar Layout",
@@ -14,6 +18,7 @@ export const NAV_ROUTES = {
 } as const;
 
 export const menuItems = [
+  NAV_ROUTES.home,
   NAV_ROUTES.componentesProntos,
   NAV_ROUTES.criarLayout,
 ];

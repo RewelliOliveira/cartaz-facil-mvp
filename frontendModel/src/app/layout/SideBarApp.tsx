@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Menu, LayoutGrid, Plus } from "lucide-react";
+import { Menu, Home as HomeIcon, LayoutGrid, Plus } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -14,6 +14,10 @@ import { NAV_ROUTES } from "../../routes/router-config";
 import { Button } from "../../components/ui/button";
 
 const menuItemsWithIcons = [
+  {
+    ...NAV_ROUTES.home,
+    icon: HomeIcon,
+  },
   {
     ...NAV_ROUTES.componentesProntos,
     icon: LayoutGrid,
