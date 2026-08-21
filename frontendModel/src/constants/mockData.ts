@@ -29,7 +29,7 @@ const gondolaElements: LayoutElement[] = [
   {
     id: "el-produto",
     label: "Nome do Produto",
-    text: "{{referencia}}",
+    text: "{{nome}}",
     x: 0.15,
     y: 0.12,
     fontSize: 5,
@@ -80,7 +80,7 @@ const promocaoElements: LayoutElement[] = [
   {
     id: "el-produto",
     label: "Nome do Produto",
-    text: "{{referencia}}",
+    text: "{{nome}}",
     x: 0.3,
     y: 0.25,
     fontSize: 8,
@@ -167,7 +167,7 @@ const simplesElements: LayoutElement[] = [
   {
     id: "el-produto",
     label: "Nome do Produto",
-    text: "{{referencia}}",
+    text: "{{nome}}",
     x: 0.25,
     y: 0.2,
     fontSize: 7,

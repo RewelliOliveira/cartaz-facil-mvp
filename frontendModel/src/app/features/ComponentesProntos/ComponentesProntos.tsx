@@ -14,6 +14,7 @@ import { MOCK_PRODUCTS } from "@/constants/mockData";
 import { NAV_ROUTES } from "@/routes/router-config";
 import { useLayouts } from "@/store/layoutsContext";
 import { parseProductString, dataToPlaceholderMap, replacePlaceholders } from "@/utils/dataParser";
+import { PrintSheet } from "@/components/print/PrintSheet";
 import type { LayoutTemplate as TLayoutTemplate } from "@/types/layout";
 
 const PX_PER_CM = 37.8;
@@ -31,7 +32,10 @@ function TemplatePreview({
   placeholders: Record<string, string> | null;
 }) {
   const heightCm = parseFloat(template.height);
-  const previewScale = 110 / (heightCm * PX_PER_CM);
+  const widthCm = parseFloat(template.width);
+  const scaleH = 110 / (heightCm * PX_PER_CM);
+  const scaleW = 180 / (widthCm * PX_PER_CM);
+  const previewScale = Math.min(scaleH, scaleW);
 
   return (
     <div className="w-full h-28 bg-muted rounded-md flex items-center justify-center overflow-hidden">
@@ -74,8 +78,12 @@ function TemplatePreview({
 export function ComponentesProntos() {
   const navigate = useNavigate();
   const { templates, deleteCustomTemplate } = useLayouts();
+
   const [placeholders, setPlaceholders] = useState<Record<string, string> | null>(null);
   const [selectedProductId, setSelectedProductId] = useState<string>("");
+
+  const [printTemplate, setPrintTemplate] = useState<TLayoutTemplate | null>(null);
+  const [printOpen, setPrintOpen] = useState(false);
 
   function handleProductChange(productId: string) {
     setSelectedProductId(productId);
@@ -83,14 +91,15 @@ export function ComponentesProntos() {
     if (!product) return;
     try {
       const parsed = parseProductString(product.rawData);
-      setPlaceholders(dataToPlaceholderMap(parsed));
+      setPlaceholders({ ...dataToPlaceholderMap(parsed), nome: product.name });
     } catch {
       setPlaceholders(null);
     }
   }
 
-  function handlePrint(templateId: string) {
-    console.log("Enviando para impressão...", templateId);
+  function handlePrint(template: TLayoutTemplate) {
+    setPrintTemplate(template);
+    setPrintOpen(true);
   }
 
   function handleEdit(templateId: string) {
@@ -114,7 +123,7 @@ export function ComponentesProntos() {
       <div className="flex items-center gap-3 mb-6 p-3 bg-muted/50 rounded-lg border border-border">
         <span className="text-sm font-medium whitespace-nowrap">Prévia com produto:</span>
         <Select value={selectedProductId} onValueChange={handleProductChange}>
-          <SelectTrigger id="gallery-product-select" className="h-8 text-xs w-[220px]">
+          <SelectTrigger id="gallery-product-select" className="h-8 text-xs w-55">
             <SelectValue placeholder="Selecione para ver prévia real..." />
           </SelectTrigger>
           <SelectContent>
@@ -127,7 +136,7 @@ export function ComponentesProntos() {
         </Select>
         {placeholders && (
           <span className="text-xs text-muted-foreground italic">
-            Mostrando dados reais na prévia
+            Mostrando dados reais
           </span>
         )}
       </div>
@@ -171,7 +180,7 @@ export function ComponentesProntos() {
                 variant="outline"
                 size="sm"
                 className="flex-1 gap-1.5 min-w-0"
-                onClick={() => handlePrint(template.id)}
+                onClick={() => handlePrint(template)}
               >
                 <Printer className="w-3.5 h-3.5 shrink-0" />
                 Imprimir
@@ -200,6 +209,13 @@ export function ComponentesProntos() {
           </Card>
         ))}
       </div>
+
+      <PrintSheet
+        template={printTemplate}
+        open={printOpen}
+        onOpenChange={setPrintOpen}
+        initialPlaceholders={placeholders}
+      />
     </div>
   );
 }

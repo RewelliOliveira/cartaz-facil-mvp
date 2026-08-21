@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft, Minus, Plus, Type, Save, ZoomIn, ZoomOut } from "lucide-react";
+import { ArrowLeft, Minus, Plus, Type, Save, ZoomIn, ZoomOut, Printer } from "lucide-react";
+import { PrintSheet } from "@/components/print/PrintSheet";
 import Moveable from "react-moveable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -76,6 +77,7 @@ export function LayoutDesign() {
   const [placeholders, setPlaceholders] = useState<Record<string, string> | null>(null);
   const [templateName, setTemplateName] = useState(initialTemplate.name);
   const [saved, setSaved] = useState(false);
+  const [printOpen, setPrintOpen] = useState(false);
 
   const elementRefs = useRef<Map<string, HTMLSpanElement | null>>(new Map());
 
@@ -89,7 +91,7 @@ export function LayoutDesign() {
     try {
       const parsed = parseProductString(product.rawData);
       setParsedData(parsed);
-      setPlaceholders(dataToPlaceholderMap(parsed));
+      setPlaceholders({ ...dataToPlaceholderMap(parsed), nome: product.name });
     } catch (err) {
       console.error("[LayoutDesign]", err);
     }
@@ -117,10 +119,10 @@ export function LayoutDesign() {
       elements: prev.elements.map((el) =>
         el.id === id
           ? {
-              ...el,
-              x: Math.max(0, parseFloat((el.x + dx / scaleFactor).toFixed(3))),
-              y: Math.max(0, parseFloat((el.y + dy / scaleFactor).toFixed(3))),
-            }
+            ...el,
+            x: Math.max(0, parseFloat((el.x + dx / scaleFactor).toFixed(3))),
+            y: Math.max(0, parseFloat((el.y + dy / scaleFactor).toFixed(3))),
+          }
           : el
       ),
     }));
@@ -142,7 +144,7 @@ export function LayoutDesign() {
 
   return (
     <div className="flex flex-col h-full bg-background">
-      <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-card shadow-sm flex-shrink-0 flex-wrap">
+      <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-card shadow-sm shrink-0 flex-wrap">
         <Button
           id="btn-back"
           variant="ghost"
@@ -168,7 +170,7 @@ export function LayoutDesign() {
         <div className="flex items-center gap-1.5 shrink-0">
           <span className="text-xs text-muted-foreground">Produto:</span>
           <Select onValueChange={handleProductChange}>
-            <SelectTrigger id="select-product" className="h-7 text-xs w-[190px]">
+            <SelectTrigger id="select-product" className="h-7 text-xs w-47.5">
               <SelectValue placeholder="Selecione..." />
             </SelectTrigger>
             <SelectContent>
@@ -219,7 +221,7 @@ export function LayoutDesign() {
           <Type className="w-3.5 h-3.5 text-muted-foreground" />
           {selectedElement ? (
             <>
-              <span className="text-xs text-muted-foreground truncate max-w-[90px]">
+              <span className="text-xs text-muted-foreground truncate max-w-22.5">
                 {selectedElement.label}
               </span>
               <div className="flex items-center border border-border rounded-md overflow-hidden">
@@ -253,6 +255,17 @@ export function LayoutDesign() {
         </div>
 
         <div className="w-px h-5 bg-border shrink-0" />
+
+        <Button
+          id="btn-print"
+          size="sm"
+          variant="outline"
+          className="h-7 gap-1.5 shrink-0"
+          onClick={() => setPrintOpen(true)}
+        >
+          <Printer className="w-3.5 h-3.5" />
+          Imprimir
+        </Button>
 
         <Button
           id="btn-save"
@@ -341,7 +354,7 @@ export function LayoutDesign() {
         </div>
       </div>
 
-      <div className="flex items-center justify-between px-4 py-1 border-t border-border bg-card text-[10px] text-muted-foreground flex-shrink-0">
+      <div className="flex items-center justify-between px-4 py-1 border-t border-border bg-card text-[10px] text-muted-foreground shrink-0">
         <span>
           Papel:{" "}
           <strong className="text-foreground">
@@ -359,6 +372,13 @@ export function LayoutDesign() {
             : "Sem produto"}
         </span>
       </div>
+
+      <PrintSheet
+        template={template}
+        open={printOpen}
+        onOpenChange={setPrintOpen}
+        initialPlaceholders={placeholders}
+      />
     </div>
   );
 }
