@@ -9,13 +9,15 @@ import { Input } from "@/components/ui/input";
 interface ColorPickerProps {
   color: string;
   onChange: (color: string) => void;
+  disabled?: boolean;
 }
 
-export function ColorPicker({ color, onChange }: ColorPickerProps) {
+export function ColorPicker({ color, onChange, disabled }: ColorPickerProps) {
   return (
     <Popover>
       <PopoverTrigger
-        className="h-10 w-10 rounded-md border-2 border-white p-1 shadow-sm ring-1 ring-border transition-transform hover:scale-105"
+        disabled={disabled}
+        className="h-10 w-10 rounded-md border-2 border-white p-1 shadow-sm ring-1 ring-border transition-transform hover:scale-105 disabled:pointer-events-none disabled:opacity-50"
         style={{ backgroundColor: color }}
         aria-label="Alterar cor do texto"
         title="Alterar cor do texto"

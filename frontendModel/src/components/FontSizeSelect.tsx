@@ -12,9 +12,14 @@ import { useEffect } from "react";
 interface FontSizeSelectProps {
   value: string;
   onChange: (value: string) => void;
+  disabled?: boolean;
 }
 
-export function FontSizeSelect({ value, onChange }: FontSizeSelectProps) {
+export function FontSizeSelect({
+  value,
+  onChange,
+  disabled,
+}: FontSizeSelectProps) {
   useEffect(() => {
     injectGoogleFont(value);
   }, [value]);
@@ -22,11 +27,12 @@ export function FontSizeSelect({ value, onChange }: FontSizeSelectProps) {
   return (
     <Select
       value={value}
+      disabled={disabled}
       onValueChange={(nextValue) => {
         if (nextValue) onChange(nextValue);
       }}
     >
-      <SelectTrigger className="w-52">
+      <SelectTrigger className="w-52" disabled={disabled}>
         <SelectValue placeholder="Fonte" />
       </SelectTrigger>
       <SelectContent>
@@ -41,3 +47,4 @@ export function FontSizeSelect({ value, onChange }: FontSizeSelectProps) {
     </Select>
   );
 }
+

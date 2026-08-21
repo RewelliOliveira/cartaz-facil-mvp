@@ -7,6 +7,7 @@ interface FontSizePickerProps {
   min?: number;
   max?: number;
   onChange: (value: number) => void;
+  disabled?: boolean;
 }
 
 export function FontSizePicker({
@@ -14,6 +15,7 @@ export function FontSizePicker({
   min = 1,
   max = 200,
   onChange,
+  disabled,
 }: FontSizePickerProps) {
   const updateValue = (newValue: number) => {
     const clampedValue = Math.min(Math.max(newValue, min), max);
@@ -28,7 +30,7 @@ export function FontSizePicker({
         size="icon"
         className="h-7 w-7"
         onClick={() => updateValue(value - 1)}
-        disabled={value <= min}
+        disabled={disabled || value <= min}
       >
         <Minus className="h-3.5 w-3.5" />
       </Button>
@@ -36,6 +38,7 @@ export function FontSizePicker({
       <Input
         type="number"
         value={value}
+        disabled={disabled}
         onChange={(e) => updateValue(Number(e.target.value))}
         className="h-7 w-12 text-center p-0 border-none shadow-none focus-visible:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
       />
@@ -46,7 +49,7 @@ export function FontSizePicker({
         size="icon"
         className="h-7 w-7"
         onClick={() => updateValue(value + 1)}
-        disabled={value >= max}
+        disabled={disabled || value >= max}
       >
         <Plus className="h-3.5 w-3.5" />
       </Button>

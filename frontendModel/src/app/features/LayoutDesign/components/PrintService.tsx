@@ -3,11 +3,12 @@ import { Printer } from "lucide-react";
 import { useReactToPrint } from "react-to-print";
 import { Button } from "@/components/ui/button";
 import type { LayoutSize } from "@/config/layout-size";
-import type { CanvasTextElement } from "./Workspace";
+import type { CanvasTextElement } from "@/types/canvas";
 
 interface PrintServiceProps {
   layoutSize: LayoutSize;
   elements: CanvasTextElement[];
+  disabled?: boolean;
 }
 
 function dimensionInPixels(value: string): number {
@@ -24,7 +25,11 @@ function resolvePosition(
     : value;
 }
 
-export function PrintService({ layoutSize, elements }: PrintServiceProps) {
+export function PrintService({
+  layoutSize,
+  elements,
+  disabled,
+}: PrintServiceProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const printWidth = dimensionInPixels(layoutSize.width);
   const printHeight = dimensionInPixels(layoutSize.height);
@@ -69,6 +74,7 @@ export function PrintService({ layoutSize, elements }: PrintServiceProps) {
         variant="outline"
         size="sm"
         onClick={() => handlePrint()}
+        disabled={disabled}
         title="Imprimir cartaz"
       >
         <Printer />

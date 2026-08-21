@@ -11,9 +11,14 @@ export type TextStyleState = {
 interface ToggleGroupDemoProps {
   value: TextStyleState;
   onChange: (value: TextStyleState) => void;
+  disabled?: boolean;
 }
 
-export function ToggleGroupDemo({ value, onChange }: ToggleGroupDemoProps) {
+export function ToggleGroupDemo({
+  value,
+  onChange,
+  disabled,
+}: ToggleGroupDemoProps) {
   const activeValues = [
     value.bold ? "bold" : "",
     value.italic ? "italic" : "",
@@ -33,13 +38,25 @@ export function ToggleGroupDemo({ value, onChange }: ToggleGroupDemoProps) {
         });
       }}
     >
-      <ToggleGroupItem value="bold" aria-label="Toggle bold">
+      <ToggleGroupItem
+        value="bold"
+        aria-label="Toggle bold"
+        disabled={disabled}
+      >
         <Bold />
       </ToggleGroupItem>
-      <ToggleGroupItem value="italic" aria-label="Toggle italic">
+      <ToggleGroupItem
+        value="italic"
+        aria-label="Toggle italic"
+        disabled={disabled}
+      >
         <Italic />
       </ToggleGroupItem>
-      <ToggleGroupItem value="underline" aria-label="Toggle underline">
+      <ToggleGroupItem
+        value="underline"
+        aria-label="Toggle underline"
+        disabled={disabled}
+      >
         <Underline />
       </ToggleGroupItem>
     </ToggleGroup>
