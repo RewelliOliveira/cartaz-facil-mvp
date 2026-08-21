@@ -50,7 +50,8 @@ export function PrintSheet({ template, open, onOpenChange, initialPlaceholders }
       : "",
   });
 
-  function handleProductChange(productId: string) {
+  function handleProductChange(productId: string | null) {
+    if (!productId) return;
     const product = MOCK_PRODUCTS.find((p) => p.id === productId);
     if (!product) return;
     try {

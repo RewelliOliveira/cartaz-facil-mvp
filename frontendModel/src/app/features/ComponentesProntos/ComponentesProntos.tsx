@@ -85,7 +85,8 @@ export function ComponentesProntos() {
   const [printTemplate, setPrintTemplate] = useState<TLayoutTemplate | null>(null);
   const [printOpen, setPrintOpen] = useState(false);
 
-  function handleProductChange(productId: string) {
+  function handleProductChange(productId: string | null) {
+    if (!productId) return;
     setSelectedProductId(productId);
     const product = MOCK_PRODUCTS.find((p) => p.id === productId);
     if (!product) return;
